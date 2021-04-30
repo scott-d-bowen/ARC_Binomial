@@ -29,7 +29,7 @@ func initialise() {
 initialise()
 
 // Then we generate 4MB of random test data (it is /2 for the width of a UInt16)
-var randomPairs: [UInt16] = Array(repeating: 0x0000, count: 1*2*1024*/2)
+var randomPairs: [UInt16] = Array(repeating: 0x0000, count: 1*2*1024/2)
 func generateRandomData() {
     for index in 0..<randomPairs.count {
         randomPairs[index] = UInt16.random(in: 0...0xFFFF)
