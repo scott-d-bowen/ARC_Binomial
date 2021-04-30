@@ -29,7 +29,7 @@ func initialise() {
 initialise()
 
 // Then we generate 4MB of random test data (it is /2 for the width of a UInt16)
-var randomPairs: [UInt16] = Array(repeating: 0x0000, count: 1*2*1024/2)
+var randomPairs: [UInt16] = Array(repeating: 0x0000, count: 1*4*1024/2)
 func generateRandomData() {
     for index in 0..<randomPairs.count {
         randomPairs[index] = UInt16.random(in: 0...0xFFFF)
@@ -67,11 +67,27 @@ print(finalMatrix.count)
 // Then we capture the data from the above Matrix to a file on disk, for further analysis and compression with command line tools
 func saveDataToFile(dataToSave: [(nzbc: UInt8, rank: UInt16)], filename: String) {
     print("Saving Data to File...")
-    let outputFile = URL(fileURLWithPath: "/Users/sdb/TEST DATA/ProjectSDBX/" + filename)
-    // let dataToWrite = Data(bytes: &dataToSave, count: dataToSave.count)
-    let dataToWrite = Data(bytes: dataToSave, count: dataToSave.count * MemoryLayout<[(nzbc: UInt8, rank: UInt16)]>.stride)
-    try! dataToWrite.write(to: outputFile)
-    print(" - Saved to: " + filename)
+    
+    let fileA = URL(fileURLWithPath: "/Users/sdb/TEST DATA/ProjectSDBX/" + filename + "__A")
+    let fileB = URL(fileURLWithPath: "/Users/sdb/TEST DATA/ProjectSDBX/" + filename + "__B")
+    
+    var dataToWrite = Data()
+    
+    for idx in 0..<dataToSave.count {
+        dataToWrite.append(dataToSave[idx].nzbc)
+    }
+    try! dataToWrite.write(to: fileA)
+    print(" - Saved to: " + fileA.absoluteString)
+    dataToWrite.removeAll() // As we are going to re-use it below
+    
+    for idx in 0..<dataToSave.count {
+        let byteA: UInt8 = UInt8(dataToSave[idx].rank / 256)
+        let byteB: UInt8 = UInt8(dataToSave[idx].rank % 256)
+        let bytes: [UInt8] = [byteA, byteB]
+        dataToWrite.append(Data(bytes))
+    }
+    try! dataToWrite.write(to: fileB)
+    print(" - Saved to: " + fileB.absoluteString)
 }
 saveDataToFile(dataToSave: finalMatrix, filename: "BinomialIntermediateTest.sdbx")
 
