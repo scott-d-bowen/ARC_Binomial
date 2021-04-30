@@ -21,7 +21,9 @@ func initialise() {
         let nzbc = UInt8(index.nonzeroBitCount)
         binomialMatrix[Int(nzbc)].append(index)
     }
-    print(binomialMatrix[8].count, terminator: ", ")
+    for lookWithin in 0..<binomialMatrix.count {
+        print(binomialMatrix[lookWithin].count, terminator: ", ")
+    }
     print(binomialMatrix.count)
 }
 initialise()
